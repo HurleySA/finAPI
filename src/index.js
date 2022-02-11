@@ -1,4 +1,4 @@
-const { response } = require("express");
+const { response, request } = require("express");
 const express = require("express");
 const { v4: uuidv4 } = require("uuid");
 
@@ -106,6 +106,31 @@ app.get("/statement/date", verifyIfExistsAccountCPF ,(request, response) => {
     const statement = user.statement.filter(( statement ) => statement.created_at.toDateString() 
     === new Date(dateFormat).toDateString());
     return response.json(statement);
+})
+
+app.put("/account",verifyIfExistsAccountCPF, (request, response) => {
+    const { name } = request.body;
+    const { user } = request;
+
+    if(user) user.name = name;
+
+    return response.status(201).send();
+})
+
+app.delete("/account", verifyIfExistsAccountCPF, (request, response) => {
+    const { user } = request;
+
+    users.splice(user,1);
+
+    return response.status(200).json(users);
+})
+
+app.get("/balance", verifyIfExistsAccountCPF, (request, response) =>{
+    const { user } = request;
+
+    const balance = getBalance(user.statement);
+
+    return response.json(balance);
 })
 
 app.listen(3333);
